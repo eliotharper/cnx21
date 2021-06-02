@@ -1,0 +1,214 @@
+<!-- {{={< >}=}} -->
+<!doctype html>
+<html ⚡4email data-css-strict>
+<head>
+  <meta charset="utf-8">
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
+  <script async custom-element="amp-list" src="https://cdn.ampproject.org/v0/amp-list-0.1.js"></script>
+  <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
+  <script async custom-element="amp-bind" src="https://cdn.ampproject.org/v0/amp-bind-0.1.js"></script>
+  <style amp4email-boilerplate>body{visibility:hidden}</style>
+  <style amp-custom>
+    body { 
+      margin: 1vh;
+      font-family: Helvetica,Arial,sans-serif;
+      font-style: normal;
+
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    button, a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    button:hover, a:hover {
+      color: #ff8400;
+    }
+
+    button:disabled {
+      color: #ccc;
+    }
+
+    button, p {
+      font-size: 11pt;
+    }
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      outline: none;
+    }
+    #destinations {
+      margin-bottom: 2em;
+    }
+    .tile {
+       border: 1px solid #ccc;
+       display: flex;
+       flex-direction: row;
+       margin: 2em;
+       height: auto;
+       filter: drop-shadow(0 0 5px #ccc);
+       background-color: #fff;
+       width: 80vw;
+    }
+    .hero-img {
+       float: left;
+       width: 320px;
+       height: 200px;
+       margin-right: 1em;
+    }
+
+    .text {
+      height: 75%;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      height: auto;
+    }
+
+    .content p {
+      margin: 0 1em 0 0;
+      line-height: 130%;
+    }
+
+    .read-more p {
+      margin: 0;
+    }
+
+    .read-more {
+      width: 30%;
+    }
+
+    .save {
+      width: 70%;
+    }
+
+    .read-more,
+    .save {
+      margin: auto;
+    }
+    .save {
+      text-align: right;
+      margin-right: 1em;
+    }
+
+    .heart {
+      color: #e74c3c;
+      font-size: 1.2em;
+    }
+
+    @media (max-width: 800px) {
+      .tile {
+        flex-direction: column;
+        width: 80vw;
+      }
+      .content {
+        width: 270px;
+        margin: 0 1em 1em;
+        height: auto;
+        min-height: 100%;
+      }
+      .content p {
+        margin: 0;
+      }
+      .text {
+        height: auto;
+      }
+      .links {
+        margin-top: 1em;
+      }
+      .save {
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<amp-list src="%%=CloudPagesURL(123)=%%"
+       id="destinations"
+       binding="refresh"
+       width="700"
+       height="1200"
+       layout="responsive">
+<div placeholder>Loading...</div>
+<div fallback>Insert fallback content here (save static HTML).</div>
+
+<template type="amp-mustache">
+
+<div class="tile">
+   <div class="hero-img">
+      <amp-img
+        alt="{{title}}"
+        src="{{image}}"
+        width="300"
+        height="200"
+      >
+      </amp-img>
+   </div>
+   <div class="content">
+    <div class="text">
+      <h2>{{title}}
+        <span class="heart" 
+              [text]="saved.{{id}}.status=='added' ? '&#9829;' : ''">
+        </span>
+      </h2>
+      <p>{{content}}</p>
+    </div>
+    <div class="links">
+       <div class="read-more">
+          <p><a href="{{url}}" target="_blank">read more</a></p>
+       </div>
+       <div class="save">
+          <button on="tap:AMP.setState({
+          form: { id: '{{id}}',
+                  action: saved.{{id}}.status=='added' ? 'remove' : 'add'
+          },
+          saved: { {{id}} : { status: 'adding'} }
+          }),wishlist.submit" 
+         type="button"
+         data-toggle="button"
+         [disabled]="saved.{{id}}.status=='adding' || saved.{{id}}.status=='failed'"
+         [text]="saved.{{id}}.status=='adding' ? 'updating your wishlist' : 
+                (saved.{{id}}.status=='added' ? 'remove from my wishlist' : 
+                (saved.{{id}}.status=='failed' ? 'update failed' :
+                'add to my wishlist'))"
+         >add to my wishlist
+         </button>
+       </div>
+      </div>
+   </div>
+</div>
+
+
+</template>
+</amp-list>
+
+<form method="post"
+      id="wishlist"
+      action-xhr="%%=CloudPagesURL(123)=%%"
+      on="submit-success:AMP.setState({ saved: {
+      [event.response.id]: {
+           status: event.response.updated==true ? ( form.action=='add' ? 'added' : 'removed' ) : 'failed',
+         }
+        }
+       })">
+
+ <input type="hidden"
+        name="wishlist-id"
+        [value]="form.id">
+
+ <input type="hidden"
+        name="action"
+        [value]="form.action">
+
+</form>
+
+</body>
+</html>
