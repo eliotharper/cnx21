@@ -1,4 +1,4 @@
-# Instructions
+# Usage Instructions
 
 1. Create a new CloudPage code resource setting 'JSON' as the page type
 2. Paste the code from controller.js on the code resource page
